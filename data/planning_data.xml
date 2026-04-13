@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="seq_planning_snapshot" model="ir.sequence">
+            <field name="name">Snapshot de Planificación</field>
+            <field name="code">planning.snapshot</field>
+            <field name="prefix">PLAN/%(year)s/</field>
+            <field name="padding">4</field>
+        </record>
+    </data>
+</odoo>

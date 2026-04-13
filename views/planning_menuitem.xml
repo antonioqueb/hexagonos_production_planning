@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Root Menu -->
+    <menuitem id="menu_planning_root"
+              name="Planificación"
+              web_icon="hexagonos_production_planning,static/description/icon.png"
+              sequence="45"
+              groups="group_planning_user"/>
+
+    <!-- Submenus -->
+    <menuitem id="menu_planning_snapshots"
+              name="Snapshots"
+              parent="menu_planning_root"
+              sequence="10"/>
+
+    <menuitem id="menu_planning_demand"
+              name="Análisis de Demanda"
+              parent="menu_planning_root"
+              sequence="20"/>
+
+    <menuitem id="menu_planning_bom"
+              name="Explosión de Materiales"
+              parent="menu_planning_root"
+              sequence="30"/>
+
+    <menuitem id="menu_planning_reports"
+              name="Reportes"
+              parent="menu_planning_root"
+              sequence="40"/>
+</odoo>

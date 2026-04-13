@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Demand Line List View -->
+    <record id="view_demand_line_list" model="ir.ui.view">
+        <field name="name">planning.demand.line.list</field>
+        <field name="model">planning.demand.line</field>
+        <field name="arch" type="xml">
+            <list string="Demanda de Producción" create="false" edit="false"
+                   decoration-danger="stock_gap > 0"
+                   decoration-warning="qty_pending > qty_available and stock_gap &lt;= 0"
+                   decoration-success="qty_available >= qty_pending">
+                <field name="sale_order_name" string="Referencia"/>
+                <field name="warehouse_id"/>
+                <field name="partner_id"/>
+                <field name="product_description" string="Descripción" optional="show"/>
+                <field name="product_default_code" string="Código"/>
+                <field name="product_uom_qty" string="Cantidad" sum="Total"/>
+                <field name="qty_delivered" string="Entregado" sum="Total"/>
+                <field name="qty_pending" string="Pendiente" sum="Total"/>
+                <field name="commitment_date" string="Fecha Entrega"/>
+                <field name="order_date" string="Fecha Orden" optional="hide"/>
+                <field name="partner_number" string="Nro. Cliente" optional="hide"/>
+                <field name="state" string="Estado" optional="hide"/>
+                <field name="qty_available" string="Stock Disp." optional="show"/>
+                <field name="virtual_available" string="Proyectado" optional="hide"/>
+                <field name="stock_gap" string="Brecha" optional="show"/>
+                <field name="activity_note" string="Actividades" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Demand Line Pivot -->
+    <record id="view_demand_line_pivot" model="ir.ui.view">
+        <field name="name">planning.demand.line.pivot</field>
+        <field name="model">planning.demand.line</field>
+        <field name="arch" type="xml">
+            <pivot string="Demanda de Producción">
+                <field name="warehouse_id" type="row"/>
+                <field name="product_id" type="row"/>
+                <field name="commitment_date" type="col" interval="week"/>
+                <field name="qty_pending" type="measure"/>
+                <field name="product_uom_qty" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Demand Line Graph -->
+    <record id="view_demand_line_graph" model="ir.ui.view">
+        <field name="name">planning.demand.line.graph</field>
+        <field name="model">planning.demand.line</field>
+        <field name="arch" type="xml">
+            <graph string="Demanda de Producción" type="bar">
+                <field name="product_id"/>
+                <field name="qty_pending" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Demand Line Search -->
+    <record id="view_demand_line_search" model="ir.ui.view">
+        <field name="name">planning.demand.line.search</field>
+        <field name="model">planning.demand.line</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Demanda">
+                <field name="sale_order_name"/>
+                <field name="partner_id"/>
+                <field name="product_id"/>
+                <field name="product_default_code"/>
+                <field name="warehouse_id"/>
+                <separator/>
+                <filter name="filter_pending" string="Con Pendiente" domain="[('qty_pending', '>', 0)]"/>
+                <filter name="filter_no_stock" string="Sin Stock" domain="[('stock_gap', '>', 0)]"/>
+                <separator/>
+                <filter name="filter_this_week" string="Esta Semana"
+                        domain="[('commitment_date', '>=', (context_today() - datetime.timedelta(days=context_today().weekday())).strftime('%Y-%m-%d')),
+                                 ('commitment_date', '&lt;', (context_today() + datetime.timedelta(days=7-context_today().weekday())).strftime('%Y-%m-%d'))]"/>
+                <filter name="filter_next_week" string="Próxima Semana"
+                        domain="[('commitment_date', '>=', (context_today() + datetime.timedelta(days=7-context_today().weekday())).strftime('%Y-%m-%d')),
+                                 ('commitment_date', '&lt;', (context_today() + datetime.timedelta(days=14-context_today().weekday())).strftime('%Y-%m-%d'))]"/>
+                <separator/>
+                <group expand="0" string="Agrupar Por">
+                    <filter name="group_warehouse" string="Almacén" context="{'group_by': 'warehouse_id'}"/>
+                    <filter name="group_partner" string="Cliente" context="{'group_by': 'partner_id'}"/>
+                    <filter name="group_product" string="Producto" context="{'group_by': 'product_id'}"/>
+                    <filter name="group_date" string="Fecha Entrega (Semana)" context="{'group_by': 'commitment_date:week'}"/>
+                    <filter name="group_date_month" string="Fecha Entrega (Mes)" context="{'group_by': 'commitment_date:month'}"/>
+                    <filter name="group_state" string="Estado" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_demand_line" model="ir.actions.act_window">
+        <field name="name">Demanda de Producción</field>
+        <field name="res_model">planning.demand.line</field>
+        <field name="view_mode">list,pivot,graph</field>
+        <field name="search_view_id" ref="view_demand_line_search"/>
+        <field name="context">{'search_default_filter_pending': 1}</field>
+    </record>
+
+    <menuitem id="menu_demand_line_all"
+              name="Todas las Líneas de Demanda"
+              parent="menu_planning_demand"
+              action="action_demand_line"
+              sequence="10"/>
+</odoo>

@@ -1,0 +1,12 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_planning_snapshot_user,planning.snapshot.user,model_planning_snapshot,group_planning_user,1,1,1,0
+access_planning_snapshot_manager,planning.snapshot.manager,model_planning_snapshot,group_planning_manager,1,1,1,1
+access_planning_demand_line_user,planning.demand.line.user,model_planning_demand_line,group_planning_user,1,0,0,0
+access_planning_demand_line_manager,planning.demand.line.manager,model_planning_demand_line,group_planning_manager,1,1,1,1
+access_planning_bom_explosion_line_user,planning.bom.explosion.line.user,model_planning_bom_explosion_line,group_planning_user,1,0,0,0
+access_planning_bom_explosion_line_manager,planning.bom.explosion.line.manager,model_planning_bom_explosion_line,group_planning_manager,1,1,1,1
+access_planning_bom_consolidated_user,planning.bom.consolidated.user,model_planning_bom_consolidated,group_planning_user,1,0,0,0
+access_planning_bom_consolidated_manager,planning.bom.consolidated.manager,model_planning_bom_consolidated,group_planning_manager,1,1,1,1
+access_generate_demand_wizard_user,planning.generate.demand.wizard.user,model_planning_generate_demand_wizard,group_planning_user,1,1,1,1
+access_explode_bom_wizard_user,planning.explode.bom.wizard.user,model_planning_explode_bom_wizard,group_planning_user,1,1,1,1
+access_export_demand_wizard_user,planning.export.demand.wizard.user,model_planning_export_demand_wizard,group_planning_user,1,1,1,1

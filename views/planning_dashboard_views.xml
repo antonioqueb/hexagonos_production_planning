@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Dashboard Action - Shows consolidated across all snapshots -->
+    <record id="action_planning_dashboard_demand" model="ir.actions.act_window">
+        <field name="name">Vista General de Demanda</field>
+        <field name="res_model">planning.demand.line</field>
+        <field name="view_mode">pivot,graph,list</field>
+        <field name="search_view_id" ref="view_demand_line_search"/>
+        <field name="context">{'search_default_filter_pending': 1, 'search_default_group_warehouse': 1}</field>
+    </record>
+
+    <record id="action_planning_dashboard_consolidated" model="ir.actions.act_window">
+        <field name="name">Vista Consolidada Global</field>
+        <field name="res_model">planning.bom.consolidated</field>
+        <field name="view_mode">pivot,list,graph</field>
+        <field name="search_view_id" ref="view_bom_consolidated_search"/>
+        <field name="context">{'search_default_filter_gap': 1, 'search_default_group_type': 1}</field>
+    </record>
+
+    <menuitem id="menu_report_demand_pivot"
+              name="Demanda por Semana/Almacén"
+              parent="menu_planning_reports"
+              action="action_planning_dashboard_demand"
+              sequence="10"/>
+
+    <menuitem id="menu_report_consolidated"
+              name="Consolidado Global"
+              parent="menu_planning_reports"
+              action="action_planning_dashboard_consolidated"
+              sequence="20"/>
+</odoo>

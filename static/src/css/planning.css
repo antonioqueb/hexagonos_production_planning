@@ -1,0 +1,9 @@
+/* Planning module styles */
+.o_planning_snapshot .oe_button_box .oe_stat_button {
+    min-width: 120px;
+}
+
+.o_planning_snapshot .o_stat_info .o_stat_value {
+    font-size: 1.4rem;
+    font-weight: 700;
+}

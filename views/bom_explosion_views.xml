@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Explosion Line List -->
+    <record id="view_bom_explosion_list" model="ir.ui.view">
+        <field name="name">planning.bom.explosion.line.list</field>
+        <field name="model">planning.bom.explosion.line</field>
+        <field name="arch" type="xml">
+            <list string="Explosión de BOM" create="false" edit="false"
+                   decoration-info="product_type == 'finished'"
+                   decoration-warning="product_type == 'semi'"
+                   decoration-muted="product_type == 'raw'">
+                <field name="finished_product_id" string="Producto Terminado"/>
+                <field name="finished_product_code" string="Cód. PT" optional="show"/>
+                <field name="product_id" string="Componente"/>
+                <field name="product_code" string="Cód. Comp."/>
+                <field name="product_type" string="Tipo"/>
+                <field name="bom_level" string="Nivel"/>
+                <field name="parent_product_id" string="Padre" optional="hide"/>
+                <field name="qty_per_unit" string="Cant/Unidad" optional="show"/>
+                <field name="demand_qty_finished" string="Demanda PT"/>
+                <field name="qty_required" string="Cant. Requerida" sum="Total"/>
+                <field name="product_uom_id" string="UdM"/>
+                <field name="warehouse_id" string="Almacén"/>
+                <field name="qty_available" string="Stock" optional="show"/>
+                <field name="qty_to_produce" string="A Producir" sum="Total" optional="show"/>
+                <field name="sale_order_ids" string="Órdenes" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Explosion Pivot -->
+    <record id="view_bom_explosion_pivot" model="ir.ui.view">
+        <field name="name">planning.bom.explosion.line.pivot</field>
+        <field name="model">planning.bom.explosion.line</field>
+        <field name="arch" type="xml">
+            <pivot string="Explosión BOM">
+                <field name="product_type" type="row"/>
+                <field name="product_id" type="row"/>
+                <field name="warehouse_id" type="col"/>
+                <field name="qty_required" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Explosion Search -->
+    <record id="view_bom_explosion_search" model="ir.ui.view">
+        <field name="name">planning.bom.explosion.line.search</field>
+        <field name="model">planning.bom.explosion.line</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Explosión">
+                <field name="finished_product_id"/>
+                <field name="product_id"/>
+                <field name="product_code"/>
+                <field name="warehouse_id"/>
+                <separator/>
+                <filter name="filter_semi" string="Semi-elaborados" domain="[('product_type', '=', 'semi')]"/>
+                <filter name="filter_raw" string="Materia Prima" domain="[('product_type', '=', 'raw')]"/>
+                <filter name="filter_finished" string="Producto Terminado" domain="[('product_type', '=', 'finished')]"/>
+                <separator/>
+                <group expand="0" string="Agrupar Por">
+                    <filter name="group_type" string="Tipo" context="{'group_by': 'product_type'}"/>
+                    <filter name="group_warehouse" string="Almacén" context="{'group_by': 'warehouse_id'}"/>
+                    <filter name="group_finished" string="Producto Terminado" context="{'group_by': 'finished_product_id'}"/>
+                    <filter name="group_level" string="Nivel BOM" context="{'group_by': 'bom_level'}"/>
+                    <filter name="group_parent" string="Producto Padre" context="{'group_by': 'parent_product_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Consolidated List -->
+    <record id="view_bom_consolidated_list" model="ir.ui.view">
+        <field name="name">planning.bom.consolidated.list</field>
+        <field name="model">planning.bom.consolidated</field>
+        <field name="arch" type="xml">
+            <list string="Demanda Consolidada" create="false" edit="false"
+                   decoration-danger="coverage_pct &lt; 30"
+                   decoration-warning="coverage_pct >= 30 and coverage_pct &lt; 70"
+                   decoration-success="coverage_pct >= 70">
+                <field name="product_id" string="Producto"/>
+                <field name="product_code" string="Código"/>
+                <field name="product_type" string="Tipo"/>
+                <field name="product_uom_id" string="UdM"/>
+                <field name="warehouse_id" string="Almacén"/>
+                <field name="total_required" string="Total Requerido" sum="Total"/>
+                <field name="qty_available" string="Stock Disp." sum="Total"/>
+                <field name="virtual_available" string="Proyectado" optional="show"/>
+                <field name="qty_gap" string="Brecha" sum="Total"/>
+                <field name="coverage_pct" string="% Cobertura" widget="progressbar"/>
+                <field name="finished_product_names" string="PTs" optional="hide"/>
+                <field name="sale_order_names" string="Órdenes" optional="hide"/>
+                <field name="demand_line_count" string="# Líneas" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Consolidated Pivot -->
+    <record id="view_bom_consolidated_pivot" model="ir.ui.view">
+        <field name="name">planning.bom.consolidated.pivot</field>
+        <field name="model">planning.bom.consolidated</field>
+        <field name="arch" type="xml">
+            <pivot string="Demanda Consolidada">
+                <field name="product_type" type="row"/>
+                <field name="product_id" type="row"/>
+                <field name="warehouse_id" type="col"/>
+                <field name="total_required" type="measure"/>
+                <field name="qty_gap" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Consolidated Search -->
+    <record id="view_bom_consolidated_search" model="ir.ui.view">
+        <field name="name">planning.bom.consolidated.search</field>
+        <field name="model">planning.bom.consolidated</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Consolidado">
+                <field name="product_id"/>
+                <field name="product_code"/>
+                <field name="warehouse_id"/>
+                <separator/>
+                <filter name="filter_semi" string="Semi-elaborados" domain="[('product_type', '=', 'semi')]"/>
+                <filter name="filter_raw" string="Materia Prima" domain="[('product_type', '=', 'raw')]"/>
+                <filter name="filter_critical" string="Críticos (&lt;50% cobertura)" domain="[('coverage_pct', '&lt;', 50)]"/>
+                <filter name="filter_gap" string="Con Brecha" domain="[('qty_gap', '>', 0)]"/>
+                <separator/>
+                <group expand="0" string="Agrupar Por">
+                    <filter name="group_type" string="Tipo" context="{'group_by': 'product_type'}"/>
+                    <filter name="group_warehouse" string="Almacén" context="{'group_by': 'warehouse_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Actions -->
+    <record id="action_bom_explosion" model="ir.actions.act_window">
+        <field name="name">Explosión de BOM</field>
+        <field name="res_model">planning.bom.explosion.line</field>
+        <field name="view_mode">list,pivot</field>
+        <field name="search_view_id" ref="view_bom_explosion_search"/>
+    </record>
+
+    <record id="action_bom_consolidated" model="ir.actions.act_window">
+        <field name="name">Demanda Consolidada</field>
+        <field name="res_model">planning.bom.consolidated</field>
+        <field name="view_mode">list,pivot</field>
+        <field name="search_view_id" ref="view_bom_consolidated_search"/>
+        <field name="context">{'search_default_filter_gap': 1}</field>
+    </record>
+
+    <!-- Menus -->
+    <menuitem id="menu_bom_explosion"
+              name="Explosión Multinivel"
+              parent="menu_planning_bom"
+              action="action_bom_explosion"
+              sequence="10"/>
+
+    <menuitem id="menu_bom_consolidated"
+              name="Demanda Consolidada"
+              parent="menu_planning_bom"
+              action="action_bom_consolidated"
+              sequence="20"/>
+</odoo>

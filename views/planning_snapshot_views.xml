@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Snapshot Form -->
+    <record id="view_planning_snapshot_form" model="ir.ui.view">
+        <field name="name">planning.snapshot.form</field>
+        <field name="model">planning.snapshot</field>
+        <field name="arch" type="xml">
+            <form string="Snapshot de Planificación">
+                <header>
+                    <button name="action_generate_demand" string="Generar Demanda"
+                            type="object" class="oe_highlight"
+                            invisible="state not in ('draft', 'generated')"/>
+                    <button name="action_explode_bom" string="Explotar BOM"
+                            type="object" class="oe_highlight"
+                            invisible="state != 'generated'"/>
+                    <button name="action_refresh" string="Actualizar Todo"
+                            type="object" class="btn-primary"
+                            invisible="state not in ('generated', 'exploded')"
+                            confirm="Esto regenerará toda la demanda y explosión. ¿Continuar?"/>
+                    <button name="action_mark_done" string="Finalizar"
+                            type="object"
+                            invisible="state != 'exploded'"/>
+                    <button name="action_cancel" string="Cancelar"
+                            type="object"
+                            invisible="state in ('done', 'cancelled')"/>
+                    <button name="action_reset_draft" string="Volver a Borrador"
+                            type="object"
+                            invisible="state not in ('done', 'cancelled')"
+                            confirm="Esto eliminará todas las líneas generadas. ¿Continuar?"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,generated,exploded,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_demand" type="object"
+                                class="oe_stat_button" icon="fa-list-alt"
+                                invisible="demand_count == 0">
+                            <field name="demand_count" widget="statinfo" string="Demanda"/>
+                        </button>
+                        <button name="action_view_explosion" type="object"
+                                class="oe_stat_button" icon="fa-sitemap"
+                                invisible="explosion_count == 0">
+                            <field name="explosion_count" widget="statinfo" string="Explosión"/>
+                        </button>
+                        <button name="action_view_consolidated" type="object"
+                                class="oe_stat_button" icon="fa-compress"
+                                invisible="consolidated_count == 0">
+                            <field name="consolidated_count" widget="statinfo" string="Consolidado"/>
+                        </button>
+                        <button name="action_view_critical" type="object"
+                                class="oe_stat_button" icon="fa-exclamation-triangle"
+                                invisible="critical_items_count == 0">
+                            <field name="critical_items_count" widget="statinfo" string="Críticos"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Nombre del Snapshot"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Filtros de Demanda">
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                            <field name="warehouse_ids" widget="many2many_tags"/>
+                        </group>
+                        <group string="Filtros Adicionales">
+                            <field name="partner_ids" widget="many2many_tags"/>
+                            <field name="product_ids" widget="many2many_tags"/>
+                        </group>
+                    </group>
+                    <group string="KPIs" invisible="state == 'draft'">
+                        <group>
+                            <field name="total_demand_value" string="Cantidad Total Demandada"/>
+                            <field name="total_products"/>
+                        </group>
+                        <group>
+                            <field name="total_orders"/>
+                            <field name="critical_items_count" string="Items Críticos"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Demanda" invisible="state == 'draft'">
+                            <field name="demand_line_ids" readonly="1">
+                                <list decoration-danger="stock_gap > 0"
+                                       decoration-success="qty_available >= qty_pending"
+                                       editable="false" create="false">
+                                    <field name="sale_order_name" string="Orden"/>
+                                    <field name="warehouse_id"/>
+                                    <field name="partner_id"/>
+                                    <field name="product_default_code" string="Código"/>
+                                    <field name="product_uom_qty" string="Cantidad" sum="Total"/>
+                                    <field name="qty_pending" string="Pendiente" sum="Total"/>
+                                    <field name="commitment_date" string="Fecha Entrega"/>
+                                    <field name="qty_available" string="Stock"/>
+                                    <field name="stock_gap" string="Brecha"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Explosión BOM" invisible="state in ('draft', 'generated')">
+                            <field name="explosion_line_ids" readonly="1">
+                                <list decoration-info="product_type == 'finished'"
+                                       decoration-warning="product_type == 'semi'"
+                                       editable="false" create="false">
+                                    <field name="finished_product_id" string="PT"/>
+                                    <field name="product_id" string="Componente"/>
+                                    <field name="product_type" string="Tipo"/>
+                                    <field name="bom_level" string="Nivel"/>
+                                    <field name="qty_required" string="Requerido" sum="Total"/>
+                                    <field name="qty_available" string="Stock"/>
+                                    <field name="qty_to_produce" string="A Producir" sum="Total"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Consolidado" invisible="state in ('draft', 'generated')">
+                            <field name="consolidated_line_ids" readonly="1">
+                                <list decoration-danger="coverage_pct &lt; 30"
+                                       decoration-warning="coverage_pct >= 30 and coverage_pct &lt; 70"
+                                       decoration-success="coverage_pct >= 70"
+                                       editable="false" create="false">
+                                    <field name="product_id"/>
+                                    <field name="product_code" string="Código"/>
+                                    <field name="product_type" string="Tipo"/>
+                                    <field name="warehouse_id"/>
+                                    <field name="total_required" string="Requerido" sum="Total"/>
+                                    <field name="qty_available" string="Stock" sum="Total"/>
+                                    <field name="qty_gap" string="Brecha" sum="Total"/>
+                                    <field name="coverage_pct" string="% Cobertura" widget="progressbar"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notas">
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Snapshot List -->
+    <record id="view_planning_snapshot_list" model="ir.ui.view">
+        <field name="name">planning.snapshot.list</field>
+        <field name="model">planning.snapshot</field>
+        <field name="arch" type="xml">
+            <list string="Snapshots de Planificación"
+                   decoration-muted="state == 'cancelled'"
+                   decoration-success="state == 'done'">
+                <field name="name"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-warning="state == 'generated'"
+                       decoration-primary="state == 'exploded'"
+                       decoration-success="state == 'done'"
+                       decoration-danger="state == 'cancelled'"/>
+                <field name="date_from"/>
+                <field name="date_to"/>
+                <field name="demand_count" string="# Demanda"/>
+                <field name="consolidated_count" string="# Consolidado"/>
+                <field name="critical_items_count" string="# Críticos"/>
+                <field name="create_date" string="Creado"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Snapshot Search -->
+    <record id="view_planning_snapshot_search" model="ir.ui.view">
+        <field name="name">planning.snapshot.search</field>
+        <field name="model">planning.snapshot</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Snapshot">
+                <field name="name"/>
+                <separator/>
+                <filter name="filter_draft" string="Borrador" domain="[('state', '=', 'draft')]"/>
+                <filter name="filter_active" string="Activos" domain="[('state', 'not in', ('done', 'cancelled'))]"/>
+                <filter name="filter_done" string="Finalizados" domain="[('state', '=', 'done')]"/>
+                <separator/>
+                <group expand="0" string="Agrupar Por">
+                    <filter name="group_state" string="Estado" context="{'group_by': 'state'}"/>
+                    <filter name="group_month" string="Mes" context="{'group_by': 'create_date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Snapshot Action -->
+    <record id="action_planning_snapshot" model="ir.actions.act_window">
+        <field name="name">Planificación de Producción</field>
+        <field name="res_model">planning.snapshot</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_planning_snapshot_search"/>
+        <field name="context">{'search_default_filter_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Crear un nuevo snapshot de planificación
+            </p>
+            <p>
+                Los snapshots capturan la demanda actual de órdenes de venta confirmadas
+                y explotan las listas de materiales para determinar los requerimientos
+                de semi-elaborados y materia prima por almacén.
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_snapshot_all"
+              name="Snapshots de Planificación"
+              parent="menu_planning_snapshots"
+              action="action_planning_snapshot"
+              sequence="10"/>
+</odoo>

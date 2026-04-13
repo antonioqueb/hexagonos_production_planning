@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_explode_bom_wizard_form" model="ir.ui.view">
+        <field name="name">planning.explode.bom.wizard.form</field>
+        <field name="model">planning.explode.bom.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Explotar BOM">
+                <group>
+                    <field name="snapshot_id" invisible="1"/>
+                    <field name="max_levels"/>
+                </group>
+                <footer>
+                    <button name="action_explode" string="Explotar" type="object" class="oe_highlight"/>
+                    <button string="Cancelar" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>
