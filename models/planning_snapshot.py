@@ -82,15 +82,15 @@ class PlanningSnapshot(models.Model):
         self.consolidated_line_ids.unlink()
 
         domain = [
-            ('state', 'in', ['sale', 'done']),
+            ('order_id.state', 'in', ['sale', 'done']),
         ]
 
         if self.date_from:
-            domain.append(('commitment_date', '>=', fields.Datetime.to_datetime(self.date_from)))
+            domain.append(('order_id.commitment_date', '>=', fields.Datetime.to_datetime(self.date_from)))
         if self.date_to:
-            domain.append(('commitment_date', '<=', fields.Datetime.to_datetime(self.date_to)))
+            domain.append(('order_id.commitment_date', '<=', fields.Datetime.to_datetime(self.date_to)))
         if self.warehouse_ids:
-            domain.append(('warehouse_id', 'in', self.warehouse_ids.ids))
+            domain.append(('order_id.warehouse_id', 'in', self.warehouse_ids.ids))
         if self.partner_ids:
             domain.append(('order_id.partner_id', 'in', self.partner_ids.ids))
         if self.product_ids:
