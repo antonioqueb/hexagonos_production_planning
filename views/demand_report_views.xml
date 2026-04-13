@@ -69,7 +69,6 @@
                 <field name="warehouse_id"/>
                 <separator/>
                 <filter name="filter_pending" string="Con Pendiente" domain="[('qty_pending', '>', 0)]"/>
-                <filter name="filter_no_stock" string="Sin Stock" domain="[('stock_gap', '>', 0)]"/>
                 <separator/>
                 <filter name="filter_this_week" string="Esta Semana"
                         domain="[('commitment_date', '>=', (context_today() - datetime.timedelta(days=context_today().weekday())).strftime('%Y-%m-%d')),
