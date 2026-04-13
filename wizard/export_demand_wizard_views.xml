@@ -22,13 +22,12 @@
         </field>
     </record>
 
-    <!-- Server action to open export wizard from snapshot -->
+    <!-- Action to open export wizard from snapshot -->
     <record id="action_open_export_wizard" model="ir.actions.act_window">
         <field name="name">Exportar a Excel</field>
         <field name="res_model">planning.export.demand.wizard</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
-        <field name="binding_model_id" ref="model_planning_snapshot"/>
-        <field name="binding_view_types">form</field>
+        <field name="context">{'default_snapshot_id': active_id}</field>
     </record>
 </odoo>

@@ -17,6 +17,9 @@
                             type="object" class="btn-primary"
                             invisible="state not in ('generated', 'exploded')"
                             confirm="Esto regenerará toda la demanda y explosión. ¿Continuar?"/>
+                    <button name="%(hexagonos_production_planning.action_open_export_wizard)d"
+                            string="Exportar Excel" type="action"
+                            invisible="state == 'draft'"/>
                     <button name="action_mark_done" string="Finalizar"
                             type="object"
                             invisible="state != 'exploded'"/>
