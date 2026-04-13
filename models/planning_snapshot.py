@@ -339,3 +339,17 @@ class PlanningSnapshot(models.Model):
             'domain': [('snapshot_id', '=', self.id)],
             'context': {'default_snapshot_id': self.id},
         }
+
+    def action_open_export_wizard(self):
+        self.ensure_one()
+        wizard = self.env['planning.export.demand.wizard'].create({
+            'snapshot_id': self.id,
+        })
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Exportar a Excel'),
+            'res_model': 'planning.export.demand.wizard',
+            'res_id': wizard.id,
+            'view_mode': 'form',
+            'target': 'new',
+        }
