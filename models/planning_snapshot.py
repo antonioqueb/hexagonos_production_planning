@@ -337,5 +337,5 @@ class PlanningSnapshot(models.Model):
             'res_model': 'planning.bom.consolidated',
             'view_mode': 'list',
             'domain': [('snapshot_id', '=', self.id)],
-            'context': {'default_snapshot_id': self.id, 'search_default_filter_critical': True},
+            'context': {'default_snapshot_id': self.id},
         }

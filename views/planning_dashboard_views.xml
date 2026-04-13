@@ -14,7 +14,7 @@
         <field name="res_model">planning.bom.consolidated</field>
         <field name="view_mode">pivot,list,graph</field>
         <field name="search_view_id" ref="view_bom_consolidated_search"/>
-        <field name="context">{'search_default_filter_gap': 1, 'search_default_group_type': 1}</field>
+        <field name="context">{'search_default_group_type': 1}</field>
     </record>
 
     <menuitem id="menu_report_demand_pivot"

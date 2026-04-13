@@ -104,7 +104,6 @@
                 <field name="product_id" type="row"/>
                 <field name="warehouse_id" type="col"/>
                 <field name="total_required" type="measure"/>
-                <field name="qty_gap" type="measure"/>
             </pivot>
         </field>
     </record>
@@ -121,8 +120,6 @@
                 <separator/>
                 <filter name="filter_semi" string="Semi-elaborados" domain="[('product_type', '=', 'semi')]"/>
                 <filter name="filter_raw" string="Materia Prima" domain="[('product_type', '=', 'raw')]"/>
-                <filter name="filter_critical" string="Críticos (&lt;50% cobertura)" domain="[('coverage_pct', '&lt;', 50)]"/>
-                <filter name="filter_gap" string="Con Brecha" domain="[('qty_gap', '>', 0)]"/>
                 <separator/>
                 <group expand="0" string="Agrupar Por">
                     <filter name="group_type" string="Tipo" context="{'group_by': 'product_type'}"/>
@@ -145,7 +142,7 @@
         <field name="res_model">planning.bom.consolidated</field>
         <field name="view_mode">list,pivot</field>
         <field name="search_view_id" ref="view_bom_consolidated_search"/>
-        <field name="context">{'search_default_filter_gap': 1}</field>
+        <field name="context">{}</field>
     </record>
 
     <!-- Menus -->
